@@ -1,6 +1,7 @@
 public class Board {
   private int boardHeight, boardWidth, boardMines;
   private int[][] boardMatrix;
+  final private boolean DEBUG = true;
 
   public static int[][] generateBoard(int height, int width) {
     int[][] board = new int[height][width];
@@ -33,38 +34,50 @@ public class Board {
   }
 
   public int getHeight() {
-    return boardHeight;
+    return this.boardHeight;
   }
 
   public int getWidth() {
-    return boardWidth;
+    return this.boardWidth;
   }
 
   public int getMines() {
-    return boardMines;
+    return this.boardMines;
+  }
+
+  public int getCell(int x, int y) {
+    return this.boardMatrix[y][x];
   }
 
   public int[][] getMatrix() {
-    return boardMatrix;
+    return this.boardMatrix;
   }
 
-  public void updateMatrix(int y, int x, int v) {
+  public void setCell(int x, int y, int v) {
     this.boardMatrix[y][x] = v;
   }
 
   public void populateBoard() {
-    for (int i = 0; i < boardMines; ++i) {
-      double randomY = Math.random() * boardHeight;
-      double randomX = Math.random() * boardWidth;
+    if (DEBUG) {
+      this.setCell(0, 0, 1);
+      this.setCell(this.boardWidth-1, 0, 1);
+      this.setCell(0, this.boardHeight-1, 1);
+      this.setCell(this.boardWidth-1, this.boardHeight-1, 1);
+      return;
+    }
+
+    for (int i = 0; i < this.boardMines; ++i) {
+      double randomY = Math.random() * this.boardHeight;
+      double randomX = Math.random() * this.boardWidth;
       int y = (int) randomY;
       int x = (int) randomX;
 
-      if (boardMatrix[y][x] == 1) {
+      if (this.getCell(x, y) == 1) {
         --i;
         continue;
 
       } else {
-        boardMatrix[y][x] = 1;
+        this.setCell(x, y, 1);
       }
     }
   }
@@ -86,9 +99,9 @@ public class Board {
       int i = coordinate[0];
       int j = coordinate[1];
 
-      if (i < 0 || j < 0 || (i >= boardWidth) || (j >= boardHeight)) {
+      if (i < 0 || j < 0 || (i >= this.boardWidth) || (j >= this.boardHeight)) {
         continue;
-      } else if (boardMatrix[j][i] == 1) {
+      } else if (this.getCell(i, j) == 1) {
         count++;
       }
     }
@@ -108,7 +121,7 @@ public class Board {
           count = mainBoard.countNeighbors(i, j);
         }
 
-        this.updateMatrix(j, i, count);
+        this.setCell(i, j, count);
       }
     }
   }

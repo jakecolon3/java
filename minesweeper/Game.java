@@ -1,5 +1,6 @@
 public class Game {
   private Board mainBoard, adjacencyBoard, actionBoard;
+  private int mines, gameState, flags, defused;
 
   public Game(int width, int height, int mines) {
     this.gameInit(width, height, mines);
@@ -10,6 +11,10 @@ public class Game {
   }
 
   public void gameInit(int width, int height, int mines) {
+    if (mines >= width*height) {
+      System.out.println("invalid difficulty");
+    }
+
     this.mainBoard = new Board(height, width, mines);
     this.mainBoard.populateBoard();
 
@@ -17,6 +22,11 @@ public class Game {
     this.adjacencyBoard.populateAdjacencyBoard(this.mainBoard);
 
     this.actionBoard = new Board(height, width, mines);
+
+    this.mines = mines;
+    this.flags = mines;
+    this.gameState = 0;
+    this.defused = 0;
   }
 
   public void gameInit(int difficulty) {
@@ -51,23 +61,46 @@ public class Game {
     return this.actionBoard;
   }
 
-  private void actionSweep(int x, int y) {
-    this.actionBoard.updateMatrix(y, x, 1);
+  public int getGameState() {
+    return this.gameState;
+  }
 
-    if (this.adjacencyBoard.getMatrix()[y][x] == 0) {
+  public int getMines() {
+    return this.mines;
+  }
+
+  public int getFlags() {
+    return this.flags;
+  }
+
+  public int getDefused() {
+    return this.defused;
+  }
+
+  private void actionSweep(int x, int y) {
+    this.actionBoard.setCell(x, y, 1);
+
+    if (this.mainBoard.getCell(x, y) == 1) {
+      this.gameState = -1;
+
+      System.out.println("hit mine");
+      return;
+    }
+
+    if (this.adjacencyBoard.getCell(x, y) == 0) {
 
       int[][] neighbors = this.adjacencyBoard.getNeighbors(x, y);
 
       for (int[] cell : neighbors) {
         if (cell[0] < 0
-            | cell[1] < 0
-            | cell[0] >= this.mainBoard.getWidth()
-            | cell[1] >= this.mainBoard.getHeight()) {
+          | cell[1] < 0
+          | cell[0] >= this.mainBoard.getWidth()
+          | cell[1] >= this.mainBoard.getHeight()) {
           continue;
         }
 
-        if (this.adjacencyBoard.getMatrix()[y][x] == 0
-            && this.actionBoard.getMatrix()[cell[1]][cell[0]] == 0) {
+        if (this.adjacencyBoard.getCell(x, y) == 0
+            && this.actionBoard.getCell(cell[0], cell[1]) == 0) {
           this.actionSweep(cell[0], cell[1]);
         }
       }
@@ -75,12 +108,36 @@ public class Game {
   }
 
   private void actionFlag(int x, int y) {
-    this.actionBoard.updateMatrix(y, x, 2);
+    if (this.flags <= 0) {
+      System.out.println("out of flags! you misplaced one or more");
+      return;
+    }
+
+    if (this.actionBoard.getCell(x, y) == 1) {
+      System.out.println("can't put a flag on a swept cell");
+    }
+
+    else if (this.actionBoard.getCell(x, y) == 2) {
+      this.actionBoard.setCell(x, y, 0);
+      this.flags++;
+
+    } else if (this.mainBoard.getCell(x, y) == 1) {
+      this.actionBoard.setCell(x, y, 2);
+      this.defused++;
+      this.flags--;
+
+      if (this.defused == this.mines) {
+        this.gameState = 1;
+      }
+
+    } else {
+      this.actionBoard.setCell(x, y, 2);
+      this.flags--;
+    }
   }
 
   private void actionUnsure(int x, int y) {
-    this.actionBoard.updateMatrix(y, x, 3);
-
+    this.actionBoard.setCell(x, y, 3);
   }
 
   public void doAction(int x, int y, int action) {

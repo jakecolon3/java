@@ -159,8 +159,4 @@ public class Game {
         break;
     }
   }
-
-  public void updateBoard() {
-
-  }
 }

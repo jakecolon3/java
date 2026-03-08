@@ -1,7 +1,7 @@
 public class Board {
   private int boardHeight, boardWidth, boardMines;
   private int[][] boardMatrix;
-  final private boolean DEBUG = true;
+  final private boolean DEBUG = false;
 
   public static int[][] generateBoard(int height, int width) {
     int[][] board = new int[height][width];

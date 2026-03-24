@@ -1,6 +1,7 @@
 public class Game {
+
   private Board mainBoard, adjacencyBoard, actionBoard;
-  private int mines, gameState, flags, defused;
+  private int mines, gameState, flags, defused, width, height;
 
   public Game(int width, int height, int mines) {
     this.gameInit(width, height, mines);
@@ -12,8 +13,11 @@ public class Game {
 
   public void gameInit(int width, int height, int mines) {
     if (mines >= width*height) {
-      System.out.println("invalid difficulty");
+      System.out.println("invalid difficulty"); // TODO: actually handle invalid args
     }
+
+    this.width = width;
+    this.height = height;
 
     this.mainBoard = new Board(height, width, mines);
     this.mainBoard.populateBoard();
@@ -47,6 +51,14 @@ public class Game {
         System.out.println("Invalid difficulty");
         break;
     }
+  }
+
+  public int getWidth() {
+    return this.width;
+  }
+
+  public int getHeight() {
+    return this.height;
   }
 
   public Board getMainBoard() {
@@ -95,7 +107,8 @@ public class Game {
         if (cell[0] < 0
           | cell[1] < 0
           | cell[0] >= this.mainBoard.getWidth()
-          | cell[1] >= this.mainBoard.getHeight()) {
+          | cell[1] >= this.mainBoard.getHeight())
+        {
           continue;
         }
 
@@ -114,7 +127,7 @@ public class Game {
     }
 
     if (this.actionBoard.getCell(x, y) == 1) {
-      System.out.println("can't put a flag on a swept cell"); // TODO fix printout with error messages
+      System.out.println("can't put a flag on a swept cell"); // TODO: fix printout with error messages
     }
 
     else if (this.actionBoard.getCell(x, y) == 2) {
@@ -137,7 +150,8 @@ public class Game {
   }
 
   private void actionUnsure(int x, int y) {
-    this.actionBoard.setCell(x, y, 3); // TODO check if this is valid
+    // TODO: properly implement '?' action
+    this.actionBoard.setCell(x, y, 3);
   }
 
   public void doAction(int x, int y, int action) {

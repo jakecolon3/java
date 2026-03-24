@@ -14,7 +14,7 @@ public class Main {
     System.out.printf("\033[%dF", lines + 1);
   }
 
-  public static Game createGameObject(int[] params) {
+  public static Game createGameObject(int[] params) { // TODO: handle invalid arguments
     Game game;
     if (params.length == 1) {
       game = new Game(params[0]);
@@ -34,6 +34,8 @@ public class Main {
     System.out.println("input action in the format <x, y, (1-3)>:");
     System.out.println("Board:");
     game.printBoard();
+
+    // TODO: quit keybind
     while (game.getGameState() == 0) {
 
       String input = System.console().readLine();
@@ -46,11 +48,8 @@ public class Main {
       game.printBoard();
 
       resetTerminalCursor(0);
-      System.out.println("\n            "); // clears the text that remains after input
+      System.out.println("\n                                        "); // clears the text that remains after input
       resetTerminalCursor(0);
     }
-    // System.out.println("type:");
-    // String input = System.console().readLine();
-    // System.out.println(input);
   }
 }

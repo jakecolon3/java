@@ -1,3 +1,8 @@
+package minesweeper;
+
+import minesweeper.game.*;
+import minesweeper.gui.*;
+
 public class Main {
 
   private static int[] parseInts(String[] arguments) {

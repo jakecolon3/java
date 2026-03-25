@@ -1,26 +1,31 @@
-run : Main.class
-	java Main 1
+build = build/minesweeper
+src = src/main/java/minesweeper
+cpath = CLASSPATH=./build
+javac = $(cpath) javac -d ./build
+
+run : $(build)/Main.class
+	$(cpath) java minesweeper.Main 1
 
 clean :
-	rm *.class
+	rm -rf ./build/
 
 winexample : test/AWTExample.class
-	java -cp test/ AWTExample
+	java -cp build/ AWTExample
 
-gridtest : GameGUI.class
-	java GameGUI 10 10
+gridtest : $(build)/gui/GameGUI.class
+	java -cp $(build)/gui/ minesweeper.gui.GameGUI 10 10
 
-Main.class : Main.java Game.class
-	javac Main.java
+$(build)/Main.class : $(src)/Main.java $(build)/game/Game.class $(build)/gui/GameGUI.class
+	$(javac) $(src)/Main.java
 
-Game.class : Game.java Board.class
-	javac Game.java
+$(build)/game/Game.class : $(src)/game/Game.java $(build)/game/Board.class
+	$(javac) $(src)/game/Game.java
 
-Board.class : Board.java
-	javac Board.java
+$(build)/game/Board.class : $(src)/game/Board.java
+	$(javac) $(src)/game/Board.java
 
-test/AWTExample.class : test/AWTExample.java
-	javac test/AWTExample.java
+$(build)/gui/GameGUI.class : $(src)/gui/GameGUI.java
+	$(javac) $(src)/gui/GameGUI.java
 
-GameGUI.class : GameGUI.java
-	javac GameGUI.java
+build/AWTExample.class : src/test/java/AWTExample.java
+	$(javac) src/test/java/AWTExample.java

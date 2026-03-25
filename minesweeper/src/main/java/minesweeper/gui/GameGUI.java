@@ -1,4 +1,6 @@
-// TODO: package structure
+package minesweeper.gui;
+
+import minesweeper.game.*;
 
 import java.util.ArrayList;
 import java.awt.*;

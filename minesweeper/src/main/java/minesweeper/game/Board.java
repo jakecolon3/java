@@ -1,3 +1,5 @@
+package minesweeper.game;
+
 public class Board {
   private int boardHeight, boardWidth, boardMines;
   private int[][] boardMatrix;

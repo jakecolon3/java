@@ -1,3 +1,7 @@
+package minesweeper.game;
+
+import minesweeper.game.Board;
+
 public class Game {
 
   private Board mainBoard, adjacencyBoard, actionBoard;

@@ -7,13 +7,13 @@ run : $(build)/Main.class
 	$(cpath) java minesweeper.Main 1
 
 clean :
-	rm -rf ./build/
+	rm -rf ./build
 
 winexample : test/AWTExample.class
-	java -cp build/ AWTExample
+	$(cpath) java AWTExample
 
 gridtest : $(build)/gui/GameGUI.class
-	java -cp $(build)/gui/ minesweeper.gui.GameGUI 10 10
+	$(cpath) java minesweeper.gui.GameGUI 10 10
 
 $(build)/Main.class : $(src)/Main.java $(build)/game/Game.class $(build)/gui/GameGUI.class
 	$(javac) $(src)/Main.java

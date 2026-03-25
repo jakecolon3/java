@@ -3,6 +3,8 @@ src = src/main/java/minesweeper
 cpath = CLASSPATH=./build
 javac = $(cpath) javac -d ./build
 
+all : $(build)/Main.class build/AWTExample.class
+
 run : $(build)/Main.class
 	$(cpath) java minesweeper.Main 1
 

@@ -11,7 +11,35 @@ public class GameGUI extends Frame {
 
     private Game g;
 
-    private ArrayList<Button> btns = new ArrayList<Button>();
+    private Button[] btns;
+
+    // listener class for window events
+    // we only care about closing the window but need to implement the rest of the methods
+    private class GameWindowListener implements WindowListener {
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            System.exit(0);
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) { }
+
+        @Override
+        public void windowClosed(WindowEvent e) { }
+
+        @Override
+        public void windowIconified(WindowEvent e) { }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) { }
+
+        @Override
+        public void windowActivated(WindowEvent e) { }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) { }
+    }
 
     private class GridListener implements ActionListener {
 
@@ -55,11 +83,12 @@ public class GameGUI extends Frame {
         setLayout(new GridLayout(rows, cols));
         setSize(800, 600);
 
+        this.btns = new Button[this.g.getWidth() * this.g.getHeight()];
         for (int j = 0; j < cols; j++) {
             for (int i = 0; i < rows; i++) {
 
                 var btn = new Button();
-                this.btns.add(btn);
+                this.btns[(j * g.getWidth()) + i] = btn;
 
                 String posStr = String.format("%d, %d", i, j);
 
@@ -72,6 +101,8 @@ public class GameGUI extends Frame {
                 add(btn);
             }
         }
+
+        addWindowListener(new GameWindowListener());
 
         setVisible(true);
     }

@@ -43,88 +43,82 @@ public class GameGUI extends Frame {
     // button callback
     private class GridListener implements ActionListener {
 
-        private void removeButton(Component btn, int[] btnCoords) {
+        private void removeButton(Component btn) {
             int x, y;
-            x = btnCoords[0];
-            y = btnCoords[1];
+            x = btn.getAccessibleContext().getAccessibleIndexInParent() % g.getWidth();
+            y = btn.getAccessibleContext().getAccessibleIndexInParent() / g.getHeight();
 
             remove(btn);
             add(new Label(g.getAdjacencyBoard().getCell(x, y) + "", Label.CENTER),
                 g.getWidth() * y + x); // index for the label
         }
 
-        private static void setComponentLabel(Button cmp, String label) {
-            cmp.setLabel(label);
-        }
-
-
-        public void doFlag(ActionEvent event) {
-
+        private static int[] parseCoords(ActionEvent event) {
             String[] actCmd = event.getActionCommand().split(", ");
-
             int x = Integer.parseInt(actCmd[0]);
             int y = Integer.parseInt(actCmd[1]);
 
-            g.doAction(x, y, 2);
+            return new int[] {x, y};
+        }
 
-            if (g.getActionBoard().getCell(x, y) != 2) {
 
-            }
+        public void doLabelAction(ActionEvent event, int action) {
 
-            for (Component cmp : getComponents()) { // finds the button that fired the event
+            int[] actCoords = parseCoords(event);
 
-                if (cmp instanceof Label) continue;
+            int x = actCoords[0];
+            int y = actCoords[1];
+            int index = y * g.getHeight() + x;
 
-                if (cmp.getName() == event.getActionCommand()) {
-                    setComponentLabel((Button) cmp, (g.getActionBoard().getCell(x, y) == 2 ? "f" : ""));
-                }
-            }
+            String newLabel = (action == 2 ? "f" : "?");
+
+            g.doAction(x, y, action);
+            newLabel = (g.getActionBoard().getCell(x, y) == action ? newLabel : "");
+
+            Button btn = (Button) getAccessibleContext().getAccessibleChild(index);
+            btn.setLabel(newLabel);
+
             validate();
         }
 
-
         public void doSweep(ActionEvent event) {
 
-            String[] actCmd = event.getActionCommand().split(", ");
+            int[] actCoords = parseCoords(event);
 
-            int x = Integer.parseInt(actCmd[0]);
-            int y = Integer.parseInt(actCmd[1]);
+            int x = actCoords[0];
+            int y = actCoords[1];
 
             g.doAction(x, y, 1);
 
-            // g.printBoard();
-            // System.out.println(event.getActionCommand());
-
-            for (Component cmp : getComponents()) {
+            for (Component cmp : getComponents()) { // recursively delete buttons over 0 cells
 
                 if (cmp instanceof Label) continue;
 
-                String[] cmpName = cmp.getName().split(", ");
-                int[] cmpCoords = {Integer.parseInt(cmpName[0]),
-                                   Integer.parseInt(cmpName[1])};
+                String[] cmpName   = cmp.getName().split(", ");
+                int[]    cmpCoords = {Integer.parseInt(cmpName[0]),
+                                      Integer.parseInt(cmpName[1])};
 
                 if (g.getActionBoard().getCell(cmpCoords[0], cmpCoords[1]) == 1) {
-                    removeButton(cmp, cmpCoords);
+                    removeButton(cmp);
                 }
             }
-
             validate();
         }
 
         @Override
         public void actionPerformed(ActionEvent event) {
 
-            switch (event.getModifiers()) {
-                case 16:
-                    doSweep(event);
+            switch (event.getModifiers() - 16) { // 16 is clicking without modifiers
+                case ActionEvent.SHIFT_MASK:
+                    doLabelAction(event, 2);
                     break;
 
-                case 17:
-                    doFlag(event);
+                case ActionEvent.CTRL_MASK:
+                    doLabelAction(event, 3);
                     break;
 
                 default:
-                    doFlag(event);
+                    doSweep(event);
                     break;
             }
 

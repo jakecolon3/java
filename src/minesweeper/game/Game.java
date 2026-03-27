@@ -152,17 +152,25 @@ public class Game {
     }
 
     if (this.defused == this.mines) {
-      System.out.println("win");
       this.gameState = 1;
     }
-
-    System.out.println(this.defused);
-    System.out.println(this.flags);
   }
 
   private void actionUnsure(int x, int y) {
-    // TODO: properly implement '?' action
-    this.actionBoard.setCell(x, y, 3);
+    int actCell = this.actionBoard.getCell(x, y);
+
+    switch (actCell) {
+      case 0:
+        this.actionBoard.setCell(x, y, 3);
+        break;
+
+      case 3:
+        this.actionBoard.setCell(x, y, 0);
+        break;
+
+      default:
+        break;
+    }
   }
 
   public void doAction(int x, int y, int action) {

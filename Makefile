@@ -2,18 +2,19 @@ build = build/minesweeper
 src = src/minesweeper
 cp = CLASSPATH=./build
 javac = $(cp) javac -d ./build
-srcs = $(shell find . -name '*.java')
+srcs = $(shell find ./$(src) -name '*.java')
 
-.PHONY: all run clean winexample gridtest
+.PHONY: all run clean winexample gridtest oldgridtest
 
 # MAKEFLAGS := --jobs
 
-$(build)/Main.class : $(src)/Main.java $(build)/game/Game.class $(build)/gui/GameGUI.class
+$(build)/Main.class : $(src)/Main.java $(build)/game/Game.class $(build)/gui/GameJGUI.class
 	$(javac) $(src)/Main.java
 
-all : $(build)/Main.class
+all :
+	$(javac) $(srcs)
 
-run : $(build)/Main.class
+run :
 	$(cp) java minesweeper.Main 1
 
 clean :
@@ -36,6 +37,9 @@ $(build)/game/Board.class : $(src)/game/Board.java
 
 $(build)/gui/GameGUI.class : $(src)/gui/GameGUI.java
 	$(javac) $(src)/gui/GameGUI.java
+
+$(build)/gui/GameJGUI.class : $(src)/gui/GameJGUI.java
+	$(javac) $(src)/gui/GameJGUI.java
 
 build/AWTExample.class : src/test/java/AWTExample.java
 	$(javac) src/test/java/AWTExample.java

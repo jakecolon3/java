@@ -8,6 +8,9 @@ srcs = $(shell find . -name '*.java')
 
 # MAKEFLAGS := --jobs
 
+$(build)/Main.class : $(src)/Main.java $(build)/game/Game.class $(build)/gui/GameGUI.class
+	$(javac) $(src)/Main.java
+
 all : $(build)/Main.class
 
 run : $(build)/Main.class
@@ -19,11 +22,11 @@ clean :
 winexample : test/AWTExample.class
 	$(cp) java AWTExample
 
-gridtest : $(build)/gui/GameGUI.class
-	$(cp) java minesweeper.gui.GameGUI 10 10
+gridtest : $(build)/gui/GameJGUI.class
+	$(cp) java minesweeper.gui.GameJGUI 10 10
 
-$(build)/Main.class : $(src)/Main.java $(build)/game/Game.class $(build)/gui/GameGUI.class
-	$(javac) $(src)/Main.java
+oldgridtest : $(build)/gui/GameGUI.class
+	$(cp) java minesweeper.gui.GameGUI 10 10
 
 $(build)/game/Game.class : $(src)/game/Game.java $(build)/game/Board.class
 	$(javac) $(src)/game/Game.java

@@ -2,6 +2,7 @@ package minesweeper.game;
 
 public class Game {
 
+  // TODO: replace action and game state numbers with static constants
   private Board mainBoard, adjacencyBoard, actionBoard;
   private int mines, gameState, flags, defused, width, height;
   final private boolean DEBUG = false;

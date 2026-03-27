@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 
+// TODO: menu around main frame
 public class GameGUI extends Frame {
 
     private Game g;

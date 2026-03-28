@@ -12,12 +12,14 @@ import javax.swing.*;
 // TODO: menu around main frame
 public class GameJGUI extends JFrame {
 
+    private static final int NO_MODS = 16;
     private Game g;
     private Container pane = getContentPane();
 
     // button callback
     private class GridListener implements ActionListener {
 
+        // TODO: replace this with method that changes the button's appearance and behaviour
         private void removeButton(Component btn) {
             int x, y;
             x = btn.getAccessibleContext().getAccessibleIndexInParent() % g.getWidth();
@@ -58,6 +60,7 @@ public class GameJGUI extends JFrame {
             validate();
         }
 
+        // TODO: implement clicking satisfied cell to reveal surroundings
         public void doSweep(ActionEvent event) {
 
             int[] actCoords = parseCoords(event);
@@ -87,8 +90,8 @@ public class GameJGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent event) {
 
-            switch (event.getModifiers() - 16) { // 16 is clicking without modifiers
-                case ActionEvent.SHIFT_MASK:     // modifiers just add to the base value
+            switch (event.getModifiers() - NO_MODS) {
+                case ActionEvent.SHIFT_MASK:
                     doLabelAction(event, 2);
                     break;
 

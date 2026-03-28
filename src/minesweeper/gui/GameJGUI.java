@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 
+// TODO: gui field for Game
 // TODO: flag toggle switch
 // TODO: menu around main frame
 public class GameJGUI extends JFrame {
@@ -36,7 +37,6 @@ public class GameJGUI extends JFrame {
         }
 
 
-        // TODO: stop sweeping flagged cells
         // TODO: right click to flag
         public void doLabelAction(ActionEvent event, int action) {
 
@@ -46,9 +46,10 @@ public class GameJGUI extends JFrame {
             int y = actCoords[1];
             int index = y * g.getHeight() + x;
 
-            String newButtonLabel = (action == 2 ? "f" : "?");
+            int result = g.doAction(x, y, action);
+            if (result < 0) return;
 
-            g.doAction(x, y, action); // HACK: should get a return value and stop if sweep fails
+            String newButtonLabel = (action == 2 ? "f" : "?");
             newButtonLabel = (g.getActionBoard().getCell(x, y) == action ? newButtonLabel : "");
 
             JButton btn = (JButton) pane.getAccessibleContext().getAccessibleChild(index);
@@ -64,7 +65,9 @@ public class GameJGUI extends JFrame {
             int x = actCoords[0];
             int y = actCoords[1];
 
-            g.doAction(x, y, 1);
+            int result = g.doAction(x, y, 1);
+
+            if (result < 0) return;
 
             for (Component cmp : pane.getComponents()) { // recursively delete buttons over 0 cells
 
@@ -140,6 +143,7 @@ public class GameJGUI extends JFrame {
         } catch(Exception ignored) {}
 
         // some thread safety bullshit idk
+        // only the gui should run inside this, game logic should be outside
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

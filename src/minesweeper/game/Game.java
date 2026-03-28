@@ -93,104 +93,111 @@ public class Game {
     return this.defused;
   }
 
-  // TODO: make actions return something to indicate success/fail
-  private void actionSweep(int x, int y) {
-    this.actionBoard.setCell(x, y, 1);
+  private int actionSweep(int x, int y) {
+    int actCell  = this.actionBoard.getCell(x, y);
+    int adjCell  = this.adjacencyBoard.getCell(x, y);
+    int mainCell = this.mainBoard.getCell(x, y);
 
-    if (this.mainBoard.getCell(x, y) == 1) {
-      this.gameState = -1;
-
-      System.out.println("hit mine");
-      return;
+    if (actCell != 0 & actCell != 3) {
+      return -1;
     }
 
-    if (this.adjacencyBoard.getCell(x, y) == 0) {
+    this.actionBoard.setCell(x, y, 1);
+
+    if (mainCell == 1) {
+      this.gameState = -1;
+      System.out.println("hit mine");
+
+      return -1;
+
+    } else if (adjCell == 0) {
 
       int[][] neighbors = this.adjacencyBoard.getNeighbors(x, y);
 
-      for (int[] cell : neighbors) {
-        if (cell[0] < 0
-          | cell[1] < 0
-          | cell[0] >= this.mainBoard.getWidth()
-          | cell[1] >= this.mainBoard.getHeight())
-        {
-          continue;
-        }
+      for (int[] coords : neighbors) {
+        if (
+          coords[0] < 0
+        | coords[1] < 0
+        | coords[0] >= this.mainBoard.getWidth()
+        | coords[1] >= this.mainBoard.getHeight()
+        ) continue;
 
-        if (this.adjacencyBoard.getCell(x, y) == 0
-            && this.actionBoard.getCell(cell[0], cell[1]) == 0) {
-          this.actionSweep(cell[0], cell[1]);
+        if (adjCell == 0
+            && this.actionBoard.getCell(coords[0], coords[1]) == 0) {
+          this.actionSweep(coords[0], coords[1]);
         }
       }
     }
+    return 1;
   }
 
-  private void actionFlag(int x, int y) {
+  private int actionFlag(int x, int y) {
     int actCell  = this.actionBoard.getCell(x, y);
     int mainCell = this.mainBoard  .getCell(x, y);
 
-
     if (actCell == 1) {
       System.out.println("can't put a flag on a swept cell"); // TODO: fix printout with error messages
+      return -1;
 
     } else if (actCell == 2) {
       this.actionBoard.setCell(x, y, 0);
       if (mainCell == 1) this.defused--;
       this.flags++;
+      return 1;
 
     } else if (mainCell == 1) {
       this.actionBoard.setCell(x, y, 2);
       this.defused++;
       this.flags--;
 
+      if (this.defused == this.mines) {
+        this.gameState = 1;
+      }
+      return 1;
 
     } else if (this.flags <= 0) {
       System.out.println("out of flags! you misplaced one or more");
+      return -1;
 
     } else {
       this.actionBoard.setCell(x, y, 2);
       this.flags--;
+      return 1;
     }
 
-    if (this.defused == this.mines) {
-      this.gameState = 1;
-    }
   }
 
-  private void actionUnsure(int x, int y) {
+  private int actionUnsure(int x, int y) {
     int actCell = this.actionBoard.getCell(x, y);
 
     switch (actCell) {
       case 0:
         this.actionBoard.setCell(x, y, 3);
-        break;
+        return 1;
 
       case 3:
         this.actionBoard.setCell(x, y, 0);
-        break;
+        return 1;
 
       default:
-        break;
+        return -1;
     }
   }
 
-  public void doAction(int x, int y, int action) {
+  public int doAction(int x, int y, int action) {
     switch (action) {
       case 1:
-        this.actionSweep(x, y);
-        break;
+        return this.actionSweep(x, y);
 
       case 2:
-        this.actionFlag(x, y);
-        break;
+        return this.actionFlag(x, y);
 
       case 3:
-        this.actionUnsure(x, y);
-        break;
+        return this.actionUnsure(x, y);
 
       default:
         System.out.println("Invalid action");
-        break;
+        return -1;
     }
   }
 

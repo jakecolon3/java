@@ -16,10 +16,10 @@ public class Board {
   }
 
   public Board(int height, int width, int mines) {
-    boardHeight = height;
-    boardWidth = width;
-    boardMines = mines;
-    boardMatrix = Board.generateBoard(height, width);
+    this.boardHeight = height;
+    this.boardWidth = width;
+    this.boardMines = mines;
+    this.boardMatrix = Board.generateBoard(height, width);
   }
 
   public void printBoard() {

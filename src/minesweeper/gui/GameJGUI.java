@@ -21,13 +21,13 @@ public class GameJGUI extends JFrame {
 
         // TODO: replace this with method that changes the button's appearance and behaviour
         private void removeButton(Component btn) {
-            int x, y;
-            x = btn.getAccessibleContext().getAccessibleIndexInParent() % g.getWidth();
-            y = btn.getAccessibleContext().getAccessibleIndexInParent() / g.getHeight();
+            String[] strCoords = btn.getName().split(", ");
+            int x = Integer.parseInt(strCoords[0]);
+            int y = Integer.parseInt(strCoords[1]);
+            int index = btn.getAccessibleContext().getAccessibleIndexInParent();
 
             pane.remove(btn);
-            pane.add(new JLabel(g.getAdjacencyBoard().getCell(x, y) + "", JLabel.CENTER),
-                g.getWidth() * y + x); // index for the label
+            pane.add(new JLabel(g.getAdjacencyBoard().getCell(x, y) + "", JLabel.CENTER), index);
         }
 
         private static int[] parseCoords(ActionEvent event) {
@@ -46,7 +46,8 @@ public class GameJGUI extends JFrame {
 
             int x = actCoords[0];
             int y = actCoords[1];
-            int index = y * g.getHeight() + x;
+            JButton source = (JButton) event.getSource();
+            int index = source.getAccessibleContext().getAccessibleIndexInParent();
 
             int result = g.doAction(x, y, action);
             if (result < 0) return;
@@ -60,6 +61,9 @@ public class GameJGUI extends JFrame {
             validate();
         }
 
+        // TODO: maybe refactor this into a recursive function if it's possible
+        //       you can get the surrounding button's events with ActionEvent.getSource()
+        //       and just call doSweep on each of them probably
         // TODO: implement clicking satisfied cell to reveal surroundings
         public void doSweep(ActionEvent event) {
 
@@ -108,16 +112,17 @@ public class GameJGUI extends JFrame {
         }
     }
 
-    public GameJGUI(String title, int rows, int cols, int mines) {
+    // TODO: constructor with difficulty instead of specific parameters
+    public GameJGUI(String title, int width, int height, int mines) {
 
-        this.g = new Game(rows, cols, mines);
+        this.g = new Game(height, width, mines); // honestly I'm not sure why I have to swap widht and height
         Container cp = getContentPane();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(rows, cols));
+        setLayout(new GridLayout(height, width));
 
-        for (int j = 0; j < cols; j++) {
-            for (int i = 0; i < rows; i++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
 
                 var btn = new JButton();
 
@@ -150,7 +155,7 @@ public class GameJGUI extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                var gui = new GameJGUI("grid test", 9, 9, 10);
+                var gui = new GameJGUI("grid test", 30, 16, 99);
             }
         });
     }
